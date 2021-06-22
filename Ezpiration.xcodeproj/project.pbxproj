@@ -14,6 +14,8 @@
 		8CF6D438268184490073BA12 /* Ezpiration.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8CF6D436268184490073BA12 /* Ezpiration.xcdatamodeld */; };
 		8CF6D43A268184490073BA12 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8CF6D439268184490073BA12 /* Assets.xcassets */; };
 		8CF6D43D268184490073BA12 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8CF6D43B268184490073BA12 /* LaunchScreen.storyboard */; };
+		8CF6D4512681D74A0073BA12 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF6D44F2681D74A0073BA12 /* TableViewCell.swift */; };
+		8CF6D4522681D74A0073BA12 /* TableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8CF6D4502681D74A0073BA12 /* TableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +28,8 @@
 		8CF6D439268184490073BA12 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8CF6D43C268184490073BA12 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8CF6D43E268184490073BA12 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8CF6D44F2681D74A0073BA12 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
+		8CF6D4502681D74A0073BA12 /* TableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,9 +62,10 @@
 		8CF6D42C268184490073BA12 /* Ezpiration */ = {
 			isa = PBXGroup;
 			children = (
+				8CF6D44C2681D49A0073BA12 /* Screen */,
+				8CF6D44B2681D4800073BA12 /* Component */,
 				8CF6D42D268184490073BA12 /* AppDelegate.swift */,
 				8CF6D42F268184490073BA12 /* SceneDelegate.swift */,
-				8CF6D431268184490073BA12 /* ViewController.swift */,
 				8CF6D433268184490073BA12 /* Main.storyboard */,
 				8CF6D439268184490073BA12 /* Assets.xcassets */,
 				8CF6D43B268184490073BA12 /* LaunchScreen.storyboard */,
@@ -68,6 +73,23 @@
 				8CF6D436268184490073BA12 /* Ezpiration.xcdatamodeld */,
 			);
 			path = Ezpiration;
+			sourceTree = "<group>";
+		};
+		8CF6D44B2681D4800073BA12 /* Component */ = {
+			isa = PBXGroup;
+			children = (
+				8CF6D44F2681D74A0073BA12 /* TableViewCell.swift */,
+				8CF6D4502681D74A0073BA12 /* TableViewCell.xib */,
+			);
+			path = Component;
+			sourceTree = "<group>";
+		};
+		8CF6D44C2681D49A0073BA12 /* Screen */ = {
+			isa = PBXGroup;
+			children = (
+				8CF6D431268184490073BA12 /* ViewController.swift */,
+			);
+			path = Screen;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -128,6 +150,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8CF6D43D268184490073BA12 /* LaunchScreen.storyboard in Resources */,
+				8CF6D4522681D74A0073BA12 /* TableViewCell.xib in Resources */,
 				8CF6D43A268184490073BA12 /* Assets.xcassets in Resources */,
 				8CF6D435268184490073BA12 /* Main.storyboard in Resources */,
 			);
@@ -140,6 +163,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8CF6D4512681D74A0073BA12 /* TableViewCell.swift in Sources */,
 				8CF6D438268184490073BA12 /* Ezpiration.xcdatamodeld in Sources */,
 				8CF6D432268184490073BA12 /* ViewController.swift in Sources */,
 				8CF6D42E268184490073BA12 /* AppDelegate.swift in Sources */,
