@@ -26,8 +26,6 @@ class ViewController: UIViewController {
     
     var alert : UIAlertController?
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -136,7 +134,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let action = UIContextualAction(style: .destructive, title: "Delete") { (action, view, completionHandler) in
+        
+        let delete = UIContextualAction(style: .destructive, title: "") { (action, view, completionHandler) in
             let recordToRemove = self.records![indexPath.row]
             self.context.delete(recordToRemove)
             do{
@@ -146,40 +145,47 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
             }
             self.fetchRecords()
         }
-        return UISwipeActionsConfiguration(actions: [action])
+        delete.image = UIImage(systemName: "trash")
+        
+        let edit = UIContextualAction(style: .normal, title: "Edit") { (edit, view, completionHandler) in
+            
+            let record = self.records![indexPath.row]
+            self.alert = UIAlertController(title: "Edit Title", message: "Do you want to edit your title?", preferredStyle: .alert)
+            self.alert?.addTextField(configurationHandler: { (textField) -> Void in
+                textField.placeholder = "Title"
+                textField.keyboardType = UIKeyboardType.emailAddress // Just to select one
+                textField.addTarget(self, action: #selector(self.alertTextFieldDidChange(_:)), for: .editingChanged)
+            })
+            
+            let textField = self.alert?.textFields![0]
+            textField?.text = record.file_name
+
+            let yesAction = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+                let textField = self.alert?.textFields![0]
+                record.file_name = textField?.text
+                do{
+                    try self.context.save()
+                }catch{
+                    print(error.localizedDescription)
+                }
+                self.fetchRecords()
+            })
+
+            self.alert?.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+
+            yesAction.isEnabled = false
+            self.alert?.addAction(yesAction)
+
+            self.present(self.alert!, animated: true, completion: nil)
+        }
+        
+        return UISwipeActionsConfiguration(actions: [delete, edit])
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let record = self.records![indexPath.row]
-        
-        alert = UIAlertController(title: "Edit Title", message: "Do you want to edit your title?", preferredStyle: .alert)
-        alert?.addTextField(configurationHandler: { (textField) -> Void in
-            textField.placeholder = "Title"
-            textField.keyboardType = UIKeyboardType.emailAddress // Just to select one
-            textField.addTarget(self, action: #selector(self.alertTextFieldDidChange(_:)), for: .editingChanged)
-        })
-        
-        let textField = self.alert?.textFields![0]
-        textField?.text = record.file_name
-
-        let yesAction = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
-            let textField = self.alert?.textFields![0]
-            record.file_name = textField?.text
-            do{
-                try self.context.save()
-            }catch{
-                print(error.localizedDescription)
-            }
-            self.fetchRecords()
-        })
-
-        alert?.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-
-        yesAction.isEnabled = false
-        alert?.addAction(yesAction)
-
-        self.present(alert!, animated: true, completion: nil)
+        //buat segue aja untuk open view controller sebelah
     }
+    
     
 }
 

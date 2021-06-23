@@ -11,13 +11,13 @@
         <!--Navigation Controller-->
         <scene sceneID="O1F-77-Dyb">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="NQj-dW-hnr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <navigationController id="N79-n5-UXL" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="Wwp-gT-A86">
                         <rect key="frame" x="0.0" y="44" width="390" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="NQj-dW-hnr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1043" y="144"/>
         </scene>
@@ -97,6 +97,17 @@
                     <view key="view" contentMode="scaleToFill" id="G3h-XI-hQl">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="790"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k45-Ab-N8z">
+                                <rect key="frame" x="0.0" y="70" width="390" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <items>
+                                    <navigationItem title="Title" id="2Tk-v1-ZHI">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="reply" id="GNF-ng-9WF"/>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="sZG-H8-6Gi"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
