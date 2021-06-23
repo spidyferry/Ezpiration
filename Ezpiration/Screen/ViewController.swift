@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var records:[Records]?
     var newRecordName = ""
+    var newRecordDate = Date()
 
     @IBOutlet weak var recordBtn: UIButton!
     @IBOutlet weak var borderBtn: UILabel!
@@ -74,12 +75,10 @@ class ViewController: UIViewController {
             let yesAction = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
                 let textField = self.alert?.textFields![0]
                 let date = Date()
-                let format = DateFormatter()
-                format.dateFormat = "dd-MM-yyyy"
-                let formattedDate = format.string(from: date)
                 self.newRecordName = (textField?.text)!
-                print(formattedDate)
-                print(textField?.text)
+                self.newRecordDate = date
+//                print(formattedDate)
+//                print(textField?.text)
                 self.recordBtn.layer.cornerRadius = 10
                 self.recordBtn.setTitle("Stop", for: .normal)
                 // disini panggil function speech to text
@@ -98,6 +97,7 @@ class ViewController: UIViewController {
             //ini yang dimasukin ke core data
             let newRecords = Records(context: self.context)
             newRecords.file_name = newRecordName
+            newRecords.date = newRecordDate
             do{
                 try self.context.save()
             }catch{
@@ -120,7 +120,12 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
             let files = self.records?[indexPath.row]
             // ambil data dari tabel records
             cell.labelTest.text = files?.file_name
-//            cell.dateRecord.text = files?.date
+            let date = Date()
+            let format = DateFormatter()
+            format.dateFormat = "dd-MM-yyyy"
+            let formattedDate = format.string(from: date)
+            cell.dateRecord.text = formattedDate
+//            cell.dateRecord.text = ("\(String(describing: files?.date))")
             
 //            cell.labelTest.text = self.filename[indexPath.row]
 //            cell.dateRecord.text = self.date[indexPath.row]
