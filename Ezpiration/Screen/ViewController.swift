@@ -7,8 +7,14 @@
 
 import UIKit
 import CoreData
+import Speech
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, SFSpeechRecognizerDelegate {
+    
+    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var recognitionTask: SFSpeechRecognitionTask?
+    private let audioEngine = AVAudioEngine()
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var records:[Records]?
@@ -19,10 +25,6 @@ class ViewController: UIViewController {
     @IBOutlet weak var borderBtn: UILabel!
     @IBOutlet weak var navigationBar: UINavigationBar!
     @IBOutlet weak var tableInspirations: UITableView!
-    
-//    let filename = ["All by Myself" /*, "aku", "suka", "Tahu", "Mamih", ""*/]
-//    let date = ["21 April 2021"/*, "29 February 2021", "01 January 2021", "", "", ""*/]
-//    let tag = ["love"/*, "hate", "friendship", "", "", ""*/]
     
     var alert : UIAlertController?
     
@@ -46,6 +48,60 @@ class ViewController: UIViewController {
         
     }
     
+    private func startRecording() throws {
+        
+        // Cancel the previous task if it's running.
+        recognitionTask?.cancel()
+        self.recognitionTask = nil
+        
+        // Configure the audio session for the app.
+        let audioSession = AVAudioSession.sharedInstance()
+        try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+        try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+        let inputNode = audioEngine.inputNode
+
+        // Create and configure the speech recognition request.
+        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        guard let recognitionRequest = recognitionRequest else { fatalError("Unable to create a SFSpeechAudioBufferRecognitionRequest object") }
+        recognitionRequest.shouldReportPartialResults = true
+        
+        // Keep speech recognition data on device
+        if #available(iOS 13, *) {
+            recognitionRequest.requiresOnDeviceRecognition = false
+        }
+        
+        // Create a recognition task for the speech recognition session.
+        // Keep a reference to the task so that it can be canceled.
+        recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { result, error in
+            var isFinal = false
+            
+            if let result = result {
+                // Update the text view with the results.
+                isFinal = result.isFinal
+                print("Text \(result.bestTranscription.formattedString)")
+            }
+            
+            if error != nil || isFinal {
+                // Stop recognizing speech if there is a problem.
+                self.audioEngine.stop()
+                inputNode.removeTap(onBus: 0)
+
+                self.recognitionRequest = nil
+                self.recognitionTask = nil
+            }
+        }
+
+        // Configure the microphone input.
+        let recordingFormat = inputNode.outputFormat(forBus: 0)
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
+            self.recognitionRequest?.append(buffer)
+        }
+        
+        audioEngine.prepare()
+        try audioEngine.start()
+        
+    }
+    
     func fetchRecords(){
         do {
             self.records = try context.fetch(Records.fetchRequest())
@@ -62,33 +118,28 @@ class ViewController: UIViewController {
     }
     
     @IBAction func alertRecordingName(_ sender: Any) {
+        
+        if audioEngine.isRunning {
+            audioEngine.stop()
+            recognitionRequest?.endAudio()
+        }else {
+            do {
+                try startRecording()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        
         if (recordBtn.title(for: .normal) == "Record"){
-            alert = UIAlertController(title: "Ezpiration Title", message: "Please type your inspiration title here.", preferredStyle: .alert)
-            alert?.addTextField(configurationHandler: { (textField) -> Void in
-                textField.placeholder = "Title"
-                textField.keyboardType = UIKeyboardType.emailAddress // Just to select one
-                textField.addTarget(self, action: #selector(self.alertTextFieldDidChange(_:)), for: .editingChanged)
-            })
-
-            let yesAction = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
-                let textField = self.alert?.textFields![0]
-                let date = Date()
-                self.newRecordName = (textField?.text)!
-                self.newRecordDate = date
-//                print(formattedDate)
-//                print(textField?.text)
-                self.recordBtn.layer.cornerRadius = 10
-                self.recordBtn.setTitle("Stop", for: .normal)
-                // disini panggil function speech to text
-            })
-
-            alert?.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-
-            yesAction.isEnabled = false
-            alert?.addAction(yesAction)
-
-            self.present(alert!, animated: true, completion: nil)
-        }else{
+            let date = Date()
+            let format = DateFormatter()
+            format.dateFormat = "ddMMyy-HHmmss"
+            let formattedDate = format.string(from: date)
+            newRecordName = "Inspiration \(formattedDate)"
+            newRecordDate = date
+            recordBtn.layer.cornerRadius = 10
+            recordBtn.setTitle("Stop", for: .normal)
+        } else {
             recordBtn.layer.cornerRadius = 40
             self.recordBtn.setTitle("Record", for: .normal)
             
@@ -99,13 +150,22 @@ class ViewController: UIViewController {
             do{
                 try self.context.save()
             }catch{
-                print(error.localizedDescription)
+                print("sapi \(error.localizedDescription)")
             }
             self.fetchRecords()
         }
-        
+    }
+    
+    public func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
+        if available {
+            recordBtn.isEnabled = true
+        } else {
+            recordBtn.isEnabled = false
+        }
     }
 }
+
+
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource{
     
@@ -124,10 +184,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
             let formattedDate = format.string(from: date)
             cell.dateRecord.text = formattedDate
 //            cell.dateRecord.text = ("\(String(describing: files?.date))")
-            
-//            cell.labelTest.text = self.filename[indexPath.row]
-//            cell.dateRecord.text = self.date[indexPath.row]
-//            cell.recordingTag.setTitle(self.tag[indexPath.row], for: .normal)
             return cell
         }
         return UITableViewCell()
@@ -147,39 +203,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
         }
         delete.image = UIImage(systemName: "trash")
         
-        let edit = UIContextualAction(style: .normal, title: "Edit") { (edit, view, completionHandler) in
-            
-            let record = self.records![indexPath.row]
-            self.alert = UIAlertController(title: "Edit Title", message: "Do you want to edit your title?", preferredStyle: .alert)
-            self.alert?.addTextField(configurationHandler: { (textField) -> Void in
-                textField.placeholder = "Title"
-                textField.keyboardType = UIKeyboardType.emailAddress // Just to select one
-                textField.addTarget(self, action: #selector(self.alertTextFieldDidChange(_:)), for: .editingChanged)
-            })
-            
-            let textField = self.alert?.textFields![0]
-            textField?.text = record.file_name
-
-            let yesAction = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
-                let textField = self.alert?.textFields![0]
-                record.file_name = textField?.text
-                do{
-                    try self.context.save()
-                }catch{
-                    print(error.localizedDescription)
-                }
-                self.fetchRecords()
-            })
-
-            self.alert?.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-
-            yesAction.isEnabled = false
-            self.alert?.addAction(yesAction)
-
-            self.present(self.alert!, animated: true, completion: nil)
-        }
-        
-        return UISwipeActionsConfiguration(actions: [delete, edit])
+        return UISwipeActionsConfiguration(actions: [delete])
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
