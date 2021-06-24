@@ -20,6 +20,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     var records:[Records]?
     var newRecordName = ""
     var newRecordDate = Date()
+    var newRecordStt = ""
 
     @IBOutlet weak var recordBtn: UIButton!
     @IBOutlet weak var borderBtn: UILabel!
@@ -30,6 +31,8 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationController?.navigationBar.barTintColor = UIColor.systemOrange
         
         fetchRecords()
         
@@ -50,39 +53,32 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
     private func startRecording() throws {
         
-        // Cancel the previous task if it's running.
         recognitionTask?.cancel()
         self.recognitionTask = nil
         
-        // Configure the audio session for the app.
         let audioSession = AVAudioSession.sharedInstance()
         try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         let inputNode = audioEngine.inputNode
 
-        // Create and configure the speech recognition request.
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
         guard let recognitionRequest = recognitionRequest else { fatalError("Unable to create a SFSpeechAudioBufferRecognitionRequest object") }
         recognitionRequest.shouldReportPartialResults = true
         
-        // Keep speech recognition data on device
         if #available(iOS 13, *) {
             recognitionRequest.requiresOnDeviceRecognition = false
         }
         
-        // Create a recognition task for the speech recognition session.
-        // Keep a reference to the task so that it can be canceled.
         recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { result, error in
             var isFinal = false
             
             if let result = result {
-                // Update the text view with the results.
                 isFinal = result.isFinal
                 print("Text \(result.bestTranscription.formattedString)")
+                self.newRecordStt = result.bestTranscription.formattedString
             }
             
             if error != nil || isFinal {
-                // Stop recognizing speech if there is a problem.
                 self.audioEngine.stop()
                 inputNode.removeTap(onBus: 0)
 
@@ -91,7 +87,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             }
         }
 
-        // Configure the microphone input.
+        // setup mic untuk record
         let recordingFormat = inputNode.outputFormat(forBus: 0)
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
             self.recognitionRequest?.append(buffer)
@@ -113,9 +109,10 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         }
     }
 
-    @objc func alertTextFieldDidChange(_ sender: UITextField) {
-        alert?.actions[1].isEnabled = sender.text!.count > 0
-    }
+//    buat check isempty textfield matiin tombol OK
+//    @objc func alertTextFieldDidChange(_ sender: UITextField) {
+//        alert?.actions[1].isEnabled = sender.text!.count > 0
+//    }
     
     @IBAction func alertRecordingName(_ sender: Any) {
         
@@ -147,6 +144,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             let newRecords = Records(context: self.context)
             newRecords.file_name = newRecordName
             newRecords.date = newRecordDate
+            newRecords.stt_result = newRecordStt
             do{
                 try self.context.save()
             }catch{
@@ -208,8 +206,11 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //buat segue aja untuk open view controller sebelah
+        let files = self.records![indexPath.row]
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "AudioViewer") as! AudioViewer
+        self.navigationController?.pushViewController(vc, animated: true)
+        vc.recordTitle = "\(files.file_name!)"
     }
-    
     
 }
 
