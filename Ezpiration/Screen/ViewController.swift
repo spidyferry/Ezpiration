@@ -75,7 +75,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, SFSpeechRecogni
     }
     
     private func startRecording() throws {
-        
+        newRecordStt = "empty"
         recognitionTask?.cancel()
         self.recognitionTask = nil
         
