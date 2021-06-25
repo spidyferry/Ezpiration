@@ -13,7 +13,7 @@ import AVFoundation
 class ViewController: UIViewController, AVAudioRecorderDelegate, SFSpeechRecognizerDelegate {
     
     var soundRecorder : AVAudioRecorder!
-    var fileName : String = "temp.mp4"
+    var fileName : String = "temp"
     var audio : [URL] = []
     
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "id_ID"))!
@@ -36,6 +36,13 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, SFSpeechRecogni
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+        let myFilesPath = "\(path)"
+        let files = FileManager.default.enumerator(atPath: myFilesPath)
+        while let file = files?.nextObject() {
+            print("\(file) ini sapi")
+        }
         
         navigationController?.navigationBar.barTintColor = UIColor.systemOrange
         
@@ -75,7 +82,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, SFSpeechRecogni
     }
     
     private func startRecording() throws {
-        newRecordStt = "empty"
+        newRecordStt = "The record is empty :)"
         recognitionTask?.cancel()
         self.recognitionTask = nil
         
@@ -97,8 +104,10 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, SFSpeechRecogni
             
             if let result = result {
                 isFinal = result.isFinal
-//                print("Text \(result.bestTranscription.formattedString)")
+                print("Text \(result.bestTranscription.formattedString)")
                 self.newRecordStt = result.bestTranscription.formattedString
+                
+//                save ke core data nya disini check is final
             }
             
             if error != nil || isFinal {
@@ -153,7 +162,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, SFSpeechRecogni
             let format = DateFormatter()
             format.dateFormat = "ddMMyy-HHmmss"
             let formattedDate = format.string(from: date)
-            newRecordName = "Inspiration_\(formattedDate)"
+            newRecordName = "Inspiration \(formattedDate)"
             newRecordDate = date
             
             recordBtn.layer.cornerRadius = 10
@@ -200,8 +209,6 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, SFSpeechRecogni
     }
 }
 
-
-
 extension ViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -226,23 +233,38 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
+        
+        
         let delete = UIContextualAction(style: .destructive, title: "") { (action, view, completionHandler) in
+            
+            print("\(self.records![indexPath.row]) bebek ini")
+
             let recordToRemove = self.records![indexPath.row]
+            print("\(recordToRemove.file_name!) ini sapi")
+            
+            let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory,.userDomainMask,true)[0] as NSString
+            let destinationPath = documentsPath.appendingPathComponent("\(recordToRemove.file_name!)")
+            try! FileManager.default.removeItem(atPath: destinationPath)
+            
             self.context.delete(recordToRemove)
             do{
                 try self.context.save()
             }catch{
                 print(error.localizedDescription)
             }
+
+//            todo : delete file yang kesimpan disini
+
+
             self.fetchRecords()
         }
         delete.image = UIImage(systemName: "trash")
-        
+
         return UISwipeActionsConfiguration(actions: [delete])
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //buat segue aja untuk open view controller sebelah
+        //buat segue untuk open view controller sebelah
         let files = self.records![indexPath.row]
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "AudioViewer") as! AudioViewer
         self.navigationController?.pushViewController(vc, animated: true)

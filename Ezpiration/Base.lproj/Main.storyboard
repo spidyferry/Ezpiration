@@ -171,6 +171,21 @@
             </objects>
             <point key="canvasLocation" x="2484.6153846153848" y="137.91469194312796"/>
         </scene>
+        <!--On Boarding Screen-->
+        <scene sceneID="7Wd-3I-L56">
+            <objects>
+                <viewController id="IvA-mR-ybh" customClass="OnBoardingScreen" customModule="Ezpiration" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="zoA-S7-hgU">
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="sL9-WA-P8w"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9Nt-if-TJG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="355" y="-623"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="Qr6-wb-Wve">
             <objects>
@@ -187,7 +202,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Y7G-YW-5Fq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="135.38461538461539" y="137.91469194312796"/>
+            <point key="canvasLocation" x="355" y="138"/>
         </scene>
     </scenes>
     <resources>
