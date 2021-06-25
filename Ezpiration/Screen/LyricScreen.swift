@@ -13,9 +13,10 @@ class LyricScreen: UIViewController {
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var records:[Records]?
     
+    @IBOutlet weak var recordTtl: UILabel!
     @IBOutlet weak var lyricText: UILabel!
     @IBOutlet weak var saveButton: UIButton!
-    @IBOutlet weak var recordTtl: UILabel!
+
     var lyricTitle = ""
 
     override func viewDidLoad() {
@@ -24,15 +25,15 @@ class LyricScreen: UIViewController {
         fetchRecords()
         saveButton.isEnabled = false
         recordTtl?.text = lyricTitle
-        
         lyricText.text = records?[0].stt_result
     }
     
     func fetchRecords(){
         do {
-            self.records = try context.fetch(Records.fetchRequest())
-            DispatchQueue.main.async {
-            }
+            let request = Records.fetchRequest() as NSFetchRequest<Records>
+            let pred = NSPredicate(format: "file_name == %@", lyricTitle)
+            request.predicate = pred
+            self.records = try context.fetch(request)
         } catch {
             print(error.localizedDescription)
         }
