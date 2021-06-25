@@ -16,7 +16,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, SFSpeechRecogni
     var fileName : String = "temp.mp4"
     var audio : [URL] = []
     
-    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
+    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "id_ID"))!
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine = AVAudioEngine()
@@ -132,24 +132,22 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, SFSpeechRecogni
         }
     }
     
-    @IBAction func alertRecordingName(_ sender: UIButton) {
+    @IBAction func alertRecordingName(_ sender: Any) {
         
-        
+        if audioEngine.isRunning {
+            audioEngine.stop()
+            recognitionRequest?.endAudio()
+        }else {
+            do {
+                try startRecording()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
         
         if (recordBtn.title(for: .normal) == "Record"){
             
             soundRecorder.record()
-            
-            if audioEngine.isRunning {
-                audioEngine.stop()
-                recognitionRequest?.endAudio()
-            }else {
-                do {
-                    try startRecording()
-                } catch {
-                    print(error.localizedDescription)
-                }
-            }
             
             let date = Date()
             let format = DateFormatter()
@@ -177,7 +175,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, SFSpeechRecogni
                 print("sapi \(error.localizedDescription)")
             }
             self.fetchRecords()
-            
+
             var url = getDocumentDirectory().appendingPathComponent(fileName)
             var rv = URLResourceValues()
             rv.name = newRecordName
