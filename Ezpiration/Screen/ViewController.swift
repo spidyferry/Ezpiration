@@ -8,8 +8,13 @@
 import UIKit
 import CoreData
 import Speech
+import AVFoundation
 
-class ViewController: UIViewController, SFSpeechRecognizerDelegate {
+class ViewController: UIViewController, AVAudioRecorderDelegate, SFSpeechRecognizerDelegate {
+    
+    var soundRecorder : AVAudioRecorder!
+    var fileName : String = "temp.mp4"
+    var audio : [URL] = []
     
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
@@ -34,6 +39,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         
         navigationController?.navigationBar.barTintColor = UIColor.systemOrange
         
+        setupRecorder()
         fetchRecords()
         
         recordBtn.layer.cornerRadius = 40
@@ -49,6 +55,23 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         self.tableInspirations.dataSource = self
         self.tableInspirations.separatorStyle = .none
         
+    }
+    
+    func getDocumentDirectory() -> URL {
+        let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return path[0]
+    }
+    
+    func setupRecorder(){
+        let audioFileName = getDocumentDirectory().appendingPathComponent(fileName)
+        let recordingSetting = [AVFormatIDKey : kAudioFormatAppleLossless, AVEncoderAudioQualityKey : AVAudioQuality.max.rawValue, AVEncoderBitRateKey : 320000, AVNumberOfChannelsKey : 2, AVSampleRateKey : 44100.2] as [String : Any]
+        do {
+            soundRecorder = try AVAudioRecorder(url: audioFileName, settings: recordingSetting)
+            soundRecorder.delegate = self
+            soundRecorder.prepareToRecord()
+        } catch {
+            print(error)
+        }
     }
     
     private func startRecording() throws {
@@ -74,7 +97,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             
             if let result = result {
                 isFinal = result.isFinal
-                print("Text \(result.bestTranscription.formattedString)")
+//                print("Text \(result.bestTranscription.formattedString)")
                 self.newRecordStt = result.bestTranscription.formattedString
             }
             
@@ -108,35 +131,38 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             print(error.localizedDescription)
         }
     }
-
-//    buat check isempty textfield matiin tombol OK
-//    @objc func alertTextFieldDidChange(_ sender: UITextField) {
-//        alert?.actions[1].isEnabled = sender.text!.count > 0
-//    }
     
-    @IBAction func alertRecordingName(_ sender: Any) {
+    @IBAction func alertRecordingName(_ sender: UIButton) {
         
-        if audioEngine.isRunning {
-            audioEngine.stop()
-            recognitionRequest?.endAudio()
-        }else {
-            do {
-                try startRecording()
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
+        
         
         if (recordBtn.title(for: .normal) == "Record"){
+            
+            soundRecorder.record()
+            
+            if audioEngine.isRunning {
+                audioEngine.stop()
+                recognitionRequest?.endAudio()
+            }else {
+                do {
+                    try startRecording()
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+            
             let date = Date()
             let format = DateFormatter()
             format.dateFormat = "ddMMyy-HHmmss"
             let formattedDate = format.string(from: date)
-            newRecordName = "Inspiration \(formattedDate)"
+            newRecordName = "Inspiration_\(formattedDate)"
             newRecordDate = date
+            
             recordBtn.layer.cornerRadius = 10
             recordBtn.setTitle("Stop", for: .normal)
         } else {
+            soundRecorder.stop()
+            
             recordBtn.layer.cornerRadius = 40
             self.recordBtn.setTitle("Record", for: .normal)
             
@@ -151,7 +177,20 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 print("sapi \(error.localizedDescription)")
             }
             self.fetchRecords()
+            
+            var url = getDocumentDirectory().appendingPathComponent(fileName)
+            var rv = URLResourceValues()
+            rv.name = newRecordName
+            do{
+                try url.setResourceValues(rv)
+            }catch{
+                print(error.localizedDescription)
+            }
         }
+    }
+    
+    func audioRecorderDidFinishRecording(_ recorder : AVAudioRecorder, successfully flag : Bool) {
+        return
     }
     
     public func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {

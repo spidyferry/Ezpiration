@@ -9,7 +9,6 @@ import UIKit
 import CoreData
 
 class LyricScreen: UIViewController {
-    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var records:[Records]?
     
@@ -18,6 +17,7 @@ class LyricScreen: UIViewController {
     @IBOutlet weak var saveButton: UIButton!
 
     var lyricTitle = ""
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
