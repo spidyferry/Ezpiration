@@ -14,6 +14,7 @@
 		8CC3F74B2684880E0052801E /* AudioViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC3F74A2684880E0052801E /* AudioViewer.swift */; };
 		8CC3F74E2684C0890052801E /* LyricScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC3F74D2684C0890052801E /* LyricScreen.swift */; };
 		8CE8BA072685B474000A7AFB /* OnBoardingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE8BA062685B474000A7AFB /* OnBoardingScreen.swift */; };
+		8CE8BA0E2685D4B0000A7AFB /* HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE8BA0D2685D4B0000A7AFB /* HomeScreen.swift */; };
 		8CF6D42E268184490073BA12 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF6D42D268184490073BA12 /* AppDelegate.swift */; };
 		8CF6D430268184490073BA12 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF6D42F268184490073BA12 /* SceneDelegate.swift */; };
 		8CF6D432268184490073BA12 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF6D431268184490073BA12 /* ViewController.swift */; };
@@ -33,6 +34,7 @@
 		8CC3F74A2684880E0052801E /* AudioViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioViewer.swift; sourceTree = "<group>"; };
 		8CC3F74D2684C0890052801E /* LyricScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricScreen.swift; sourceTree = "<group>"; };
 		8CE8BA062685B474000A7AFB /* OnBoardingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingScreen.swift; sourceTree = "<group>"; };
+		8CE8BA0D2685D4B0000A7AFB /* HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreen.swift; sourceTree = "<group>"; };
 		8CF6D42A268184490073BA12 /* Ezpiration.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ezpiration.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CF6D42D268184490073BA12 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8CF6D42F268184490073BA12 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 				8CC3F74A2684880E0052801E /* AudioViewer.swift */,
 				8CC3F74D2684C0890052801E /* LyricScreen.swift */,
 				8CE8BA062685B474000A7AFB /* OnBoardingScreen.swift */,
+				8CE8BA0D2685D4B0000A7AFB /* HomeScreen.swift */,
 			);
 			path = Screen;
 			sourceTree = "<group>";
@@ -190,6 +193,7 @@
 				8C76F05E2682457D001DA4D2 /* Records+CoreDataProperties.swift in Sources */,
 				8CF6D438268184490073BA12 /* Ezpiration.xcdatamodeld in Sources */,
 				8CC3F74E2684C0890052801E /* LyricScreen.swift in Sources */,
+				8CE8BA0E2685D4B0000A7AFB /* HomeScreen.swift in Sources */,
 				8CF6D432268184490073BA12 /* ViewController.swift in Sources */,
 				8CF6D42E268184490073BA12 /* AppDelegate.swift in Sources */,
 				8C76F05D2682457D001DA4D2 /* Records+CoreDataClass.swift in Sources */,
